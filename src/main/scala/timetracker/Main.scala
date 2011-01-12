@@ -9,6 +9,8 @@ import java.util.Date
 import scala.collection.mutable.ArrayBuffer
 
 object Main {
+  private val HISTOGRAM_MAX: Int = 80
+
   def main(args: Array[String]) {
     assert(args.length > 0)
     val filename = args(0)
@@ -17,7 +19,7 @@ object Main {
     val days = new ArrayBuffer[Day]
     var day: Day = null
     var date: Date = null
-    io.Source.fromFile(filename).getLines.foreach { line =>
+    for (val line <- io.Source.fromFile(filename).getLines) {
       val fields = line.split('\t')
       // skip the header
       // LERNIN: there must be a better way to do this?
@@ -33,10 +35,25 @@ object Main {
       }
     }
 
+    // Find the max value of all durations over all days
+    // LERNIN: figure out how to do this idiomatically
+    var maxDuration: Int = 0
+    for (val day <- days) {
+      for ((category, duration) <- day.categoryDurations) {
+        if (duration > maxDuration) {
+          maxDuration = duration
+        }
+      }
+    }
+
     printf("%10s  %7s  %9s  %4s  %4s  %4s  %n", "Date", "# Tasks", "# Repeats",  "Min", "Avg", "Max");
-    days.foreach { day =>
+    for (val day <- days) {
       printf("%1$tm-%1$td-%1$tY  %2$7d  %3$9d  %4$4s  %5$4s  %6$4s  %n", 
              day.date, day.numTasks, day.numRepeatTasks, day.minDuration, day.avgDuration, day.maxDuration)
+      for ((category, duration) <- day.categoryDurations) {
+        val histogram: Int = (duration * HISTOGRAM_MAX) / maxDuration
+        printf("  %8s (%3d) %s%n", category, duration, "*" * histogram)
+      }
     }
   }
 }
