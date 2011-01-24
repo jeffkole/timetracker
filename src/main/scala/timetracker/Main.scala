@@ -35,25 +35,33 @@ object Main {
       }
     }
 
-    // Find the max value of all durations over all days
-    // LERNIN: figure out how to do this idiomatically
-    var maxDuration: Int = 0
-    for (val day <- days) {
-      for ((category, duration) <- day.categoryDurations) {
-        if (duration > maxDuration) {
-          maxDuration = duration
-        }
-      }
-    }
-
+    // LERNIN: If you want an empty immutable map, you have to ask for one explicitly
+    // and not just expect that you can instantiate one with 'new'
+    var categoryDurations = Map.empty[String, Int]
     printf("%10s  %7s  %9s  %4s  %4s  %4s  %n", "Date", "# Tasks", "# Repeats",  "Min", "Avg", "Max");
     for (val day <- days) {
       printf("%1$tm-%1$td-%1$tY  %2$7d  %3$9d  %4$4s  %5$4s  %6$4s  %n", 
              day.date, day.numTasks, day.numRepeatTasks, day.minDuration, day.avgDuration, day.maxDuration)
-      for ((category, duration) <- day.categoryDurations) {
-        val histogram: Int = (duration * HISTOGRAM_MAX) / maxDuration
-        printf("  %8s (%3d) %s%n", category, duration, "*" * histogram)
+      // Accumulate category durations for all days
+      categoryDurations = day.categoryDurations(categoryDurations)
+    }
+    printf("%n");
+
+    // Find the max value of all durations over all days
+    // LERNIN: figure out how to do this idiomatically
+    var maxDuration = 0
+    var totalDuration = 0.0 // Make this a double so we don't lose precision later
+    for ((category, duration) <- categoryDurations) {
+      if (duration > maxDuration) {
+        maxDuration = duration
       }
+      totalDuration += duration
+    }
+
+    for ((category, duration) <- categoryDurations) {
+      val histogram: Int = (duration * HISTOGRAM_MAX) / maxDuration
+      val percent: Double = (duration / totalDuration) * 100
+      printf("  %8s (%4d, %3.0f%%) %s%n", category, duration, percent, "*" * histogram)
     }
   }
 }

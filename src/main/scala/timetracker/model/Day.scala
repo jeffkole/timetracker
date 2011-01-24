@@ -70,6 +70,26 @@ class Day(val date: Date) {
     categories.toMap
   }
 
+  /**
+   * Accumulates values in the given Map with category durations in this Day's tasks by summing
+   * the durations.
+   * LERNIN: a cool trick would be to have this method take an implicit parameter that defaults
+   * to a "duration sum" function that could be overloaded with another accumulator function.
+   *
+   * @return a map with the new accumulated values
+   */
+  def categoryDurations(categoryDurations: Map[String, Int]): Map[String, Int] = {
+    // LERNIN: this results in a deprecation warning, but I can't figure out why and
+    // am not going to take the time to figure out how to have buildr give me the warning details
+    val categories = new HashMap[String, Int] ++ categoryDurations
+    // LERNIN: is this structure better than tasks.foreach as used in categoryDurations?
+    for (val task <- tasks) {
+      val duration = categories.get(task.category).getOrElse(0)
+      categories.put(task.category, duration + task.duration)
+    }
+    categories.toMap
+  }
+
   override def toString = {
     format("Day: %tD%n%s", date, tasks.map(_.toString + "\n"))
   }
