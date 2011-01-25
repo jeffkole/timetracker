@@ -58,7 +58,10 @@ object Main {
       totalDuration += duration
     }
 
-    for ((category, duration) <- categoryDurations) {
+    // LERNIN: toList returns a list of Tuple2[String, Int], and we want to sort by the Int
+    // in position 2, thus the _2.
+    val sortedDurations = categoryDurations.toList.sort { (a, b) => a._2 < b._2 }.reverse
+    for ((category, duration) <- sortedDurations) {
       val histogram: Int = (duration * HISTOGRAM_MAX) / maxDuration
       val percent: Double = (duration / totalDuration) * 100
       printf("  %8s (%4d, %3.0f%%) %s%n", category, duration, percent, "*" * histogram)
