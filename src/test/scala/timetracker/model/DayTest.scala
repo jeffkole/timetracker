@@ -66,4 +66,21 @@ class DayTest extends FunSuite {
     expect(10, "Extra day 1 category wrong")(categoryDurations.get("uno").get)
     expect(14, "Extra day 2 category wrong")(categoryDurations.get("quatro").get)
   }
+
+  test("Median num tasks") {
+    testDurations(5, 3.0)
+    testDurations(6, 3.5)
+  }
+
+  private def testDurations(maxTasks: Int, expectedMedian: Double) {
+    var days: List[Day] = Nil // an empty list
+    for (number <- 1 to maxTasks) {
+      val day = new Day(format.parse("2011/01/04"))
+      for (duration <- number to maxTasks) {
+        day.addTask(new Task(day, duration, "category", null))
+      }
+      days = day :: days
+    }
+    expect(expectedMedian, "Wrong median")(Day.medianNumTasks(days))
+  }
 }

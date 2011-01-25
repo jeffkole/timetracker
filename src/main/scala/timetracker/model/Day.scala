@@ -94,3 +94,19 @@ class Day(val date: Date) {
     format("Day: %tD%n%s", date, tasks.map(_.toString + "\n"))
   }
 }
+
+object Day {
+  // LERNIN: change this to take a PartialFunction that pulls out the correct field of Day
+  def medianNumTasks(days: List[Day]): Double = {
+    // LERNIN: There has to be a way to use an implicit so that I don't have to convert
+    // an Int to itself
+    val sorted = days.map(_.numTasks).sortBy((a) => a)
+    if (sorted.size % 2 == 0) {
+      val idx = sorted.size / 2
+      val high = sorted(idx)
+      val low  = sorted(idx - 1)
+      return ((high + low) / 2.0)
+    }
+    sorted(sorted.size / 2)
+  }
+}
