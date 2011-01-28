@@ -17,16 +17,21 @@ class Day(val date: Date) {
   // otherwise, I got this compile error: abstract member may not have private modifier
   private var tasks: List[Task] = List()
 
-  def addTask(task: Task) = {
+  // LERNIN: decided that for the sake of self-documenting, always specifying a return type is a good thing
+  def addTask(task: Task): Unit = {
     tasks = task :: tasks
   }
 
-  def numTasks = {
+  def numTasks: Int = {
     tasks.size
   }
 
-  def numRepeatTasks = {
+  def numRepeatTasks: Int = {
     tasks.filter(_.repeat).size
+  }
+
+  def numUnnecessaryTasks: Int = {
+    tasks.filter(_.unnecessary).size
   }
 
   /**

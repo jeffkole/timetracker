@@ -38,10 +38,12 @@ object Main {
     // LERNIN: If you want an empty immutable map, you have to ask for one explicitly
     // and not just expect that you can instantiate one with 'new'
     var categoryDurations = Map.empty[String, Int]
-    printf("%10s  %7s  %9s  %4s  %4s  %4s  %n", "Date", "# Tasks", "# Repeats",  "Min", "Avg", "Max");
+    printf("%10s  %7s  %9s  %7s  %4s  %4s  %4s  %n",
+           "Date", "# Tasks", "# Repeats", "# Unnec", "Min", "Avg", "Max");
     for (val day <- days) {
-      printf("%1$tm-%1$td-%1$tY  %2$7d  %3$9d  %4$4s  %5$4s  %6$4s  %n", 
-             day.date, day.numTasks, day.numRepeatTasks, day.minDuration, day.avgDuration, day.maxDuration)
+      printf("%1$tm-%1$td-%1$tY  %2$7d  %3$9d  %4$7d  %5$4s  %6$4s  %7$4s  %n",
+             day.date, day.numTasks, day.numRepeatTasks, day.numUnnecessaryTasks,
+             day.minDuration, day.avgDuration, day.maxDuration)
       // Accumulate category durations for all days
       categoryDurations = day.categoryDurations(categoryDurations)
     }
