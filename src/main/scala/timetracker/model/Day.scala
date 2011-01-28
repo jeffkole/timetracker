@@ -57,33 +57,15 @@ class Day(val date: Date) {
   }
 
   /**
-   * @return a map of category names to total duration
-   */
-  def categoryDurations: Map[String, Int] = {
-    // LERNIN: when I forgot to add the type parameter to the new HashMap declaration, I got
-    // this compilation error: 
-    // error: type mismatch;
-    // found   : task.category.type (with underlying type String)
-    // required: Nothing
-    //      val duration = categories.get(task.category).getOrElse(0)
-    //                                         ^
-    val categories = new HashMap[String, Int]
-    tasks.foreach { task =>
-      val duration = categories.get(task.category).getOrElse(0)
-      categories.put(task.category, duration + task.duration)
-    }
-    categories.toMap
-  }
-
-  /**
    * Accumulates values in the given Map with category durations in this Day's tasks by summing
    * the durations.
    * LERNIN: a cool trick would be to have this method take an implicit parameter that defaults
    * to a "duration sum" function that could be overloaded with another accumulator function.
    *
+   * @param categoryDurations an optional map to start with
    * @return a map with the new accumulated values
    */
-  def categoryDurations(categoryDurations: Map[String, Int]): Map[String, Int] = {
+  def categoryDurations(categoryDurations: Map[String, Int] = Map.empty): Map[String, Int] = {
     // LERNIN: this results in a deprecation warning, but I can't figure out why and
     // am not going to take the time to figure out how to have buildr give me the warning details
     val categories = new HashMap[String, Int] ++ categoryDurations

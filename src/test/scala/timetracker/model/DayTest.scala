@@ -38,9 +38,9 @@ class DayTest extends FunSuite {
     val day = new Day(format.parse("2011/01/04"))
     val durations = List(20, 10, 5, 30, 5) // min: 5, max: 30, avg: 14
     durations.foreach { duration => day.addTask(new Task(day, duration, "category", null)) }
-    expect(durations.foldLeft(0)(_ + _), "Category durations wrong")(day.categoryDurations.get("category").get)
+    expect(durations.foldLeft(0)(_ + _), "Category durations wrong")(day.categoryDurations().get("category").get)
     day.addTask(new Task(day, 4, "category", null))
-    expect(durations.foldLeft(0)(_ + _) + 4, "Category durations wrong second time")(day.categoryDurations.get("category").get)
+    expect(durations.foldLeft(0)(_ + _) + 4, "Category durations wrong second time")(day.categoryDurations().get("category").get)
   }
 
   test("Category duration accumulator") {
@@ -54,14 +54,14 @@ class DayTest extends FunSuite {
     val day_2_total = durations.foldLeft(0)(_ + _)
     durations.foreach { duration => day_2.addTask(new Task(day_2, duration, "category", null)) }
 
-    expect(day_1_total, "Day 1 category durations wrong")(day_1.categoryDurations.get("category").get)
-    expect(day_2_total, "Day 2 category durations wrong")(day_2.categoryDurations.get("category").get)
-    var categoryDurations = day_2.categoryDurations(day_1.categoryDurations)
+    expect(day_1_total, "Day 1 category durations wrong")(day_1.categoryDurations().get("category").get)
+    expect(day_2_total, "Day 2 category durations wrong")(day_2.categoryDurations().get("category").get)
+    var categoryDurations = day_2.categoryDurations(day_1.categoryDurations())
     expect(day_1_total + day_2_total, "Combined total wrong")(categoryDurations.get("category").get)
 
     day_1.addTask(new Task(day_1, 10, "uno", null))
     day_2.addTask(new Task(day_2, 14, "quatro", null))
-    categoryDurations = day_2.categoryDurations(day_1.categoryDurations)
+    categoryDurations = day_2.categoryDurations(day_1.categoryDurations())
     expect(day_1_total + day_2_total, "Combined total wrong")(categoryDurations.get("category").get)
     expect(10, "Extra day 1 category wrong")(categoryDurations.get("uno").get)
     expect(14, "Extra day 2 category wrong")(categoryDurations.get("quatro").get)
