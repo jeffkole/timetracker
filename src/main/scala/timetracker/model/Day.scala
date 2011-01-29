@@ -15,7 +15,7 @@ class Day(val date: Date) {
   
   // LERNIN: had to assign a default value for the private List
   // otherwise, I got this compile error: abstract member may not have private modifier
-  private var tasks: List[Task] = List()
+  private var tasks: List[Task] = List.empty[Task]
 
   // LERNIN: decided that for the sake of self-documenting, always specifying a return type is a good thing
   def addTask(task: Task): Unit = {
@@ -69,9 +69,25 @@ class Day(val date: Date) {
     // LERNIN: this results in a deprecation warning, but I can't figure out why and
     // am not going to take the time to figure out how to have buildr give me the warning details
     val categories = new HashMap[String, Int] ++ categoryDurations
-    // LERNIN: is this structure better than tasks.foreach as used in categoryDurations?
+    // LERNIN: is this structure better than tasks.foreach
     for (val task <- tasks) {
-      val duration = categories.get(task.category).getOrElse(0)
+      // LERNIN: using the apply method of a Map (ie, categories(task.category)) will return the
+      // value or thrown an exception, whereas calling get will return an Option.  Even better,
+      // calling getOrElse directly on the Map is the same as calling Map.get(key).getOrElse(default).
+      val duration = categories.getOrElse(task.category, 0)
+      categories.put(task.category, duration + task.duration)
+    }
+    categories.toMap
+  }
+
+  /**
+   * Does the same thing as categoryDurations, except only counts the unnecessary tasks
+   * LERNIN: There must be a way to do this with less code duplication
+   */
+  def unnecessaryCategoryDurations(categoryDurations: Map[String, Int] = Map.empty) : Map[String, Int] = {
+    val categories = new HashMap[String, Int] ++ categoryDurations
+    for (val task <- tasks.filter(_.unnecessary)) {
+      val duration = categories.getOrElse(task.category, 0)
       categories.put(task.category, duration + task.duration)
     }
     categories.toMap

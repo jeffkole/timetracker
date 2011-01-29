@@ -67,6 +67,17 @@ class DayTest extends FunSuite {
     expect(14, "Extra day 2 category wrong")(categoryDurations.get("quatro").get)
   }
 
+  test("Unnecessary category durations") {
+    val day = new Day(format.parse("2011/01/04"))
+    val durations = List(20, 10, 5, 30, 5) // min: 5, max: 30, avg: 14
+    durations.foreach { duration => day.addTask(new Task(day, duration, "category", null)) }
+    expect(0, "Should have found no unnecessary")(day.unnecessaryCategoryDurations().get("category").getOrElse(0))
+    day.addTask(new Task(day, 4, "category", null))
+    expect(0, "Should have found no unnecessary")(day.unnecessaryCategoryDurations().get("category").getOrElse(0))
+    day.addTask(new Task(day, 5, "category-", null))
+    expect(5, "Should have found unnecessary")(day.unnecessaryCategoryDurations().get("category").get)
+  }
+
   test("Median num tasks") {
     testDurations(5, 3.0)
     testDurations(6, 3.5)

@@ -36,6 +36,7 @@ object Main {
     // LERNIN: If you want an empty immutable map, you have to ask for one explicitly
     // and not just expect that you can instantiate one with 'new'
     var categoryDurations = Map.empty[String, Int]
+    var unnecessaryCategoryDurations = Map.empty[String, Int]
     printf("%10s  %7s  %9s  %7s  %7s  %7s  %7s  %n",
            "Date", "# Tasks", "# Repeats", "# Unnec", "Min", "Avg", "Max");
     for (val day <- days) {
@@ -44,6 +45,7 @@ object Main {
              day.minDuration, day.avgDuration, day.maxDuration)
       // Accumulate category durations for all days
       categoryDurations = day.categoryDurations(categoryDurations)
+      unnecessaryCategoryDurations = day.unnecessaryCategoryDurations(unnecessaryCategoryDurations)
     }
     printf("%s%n", "-" * (10 + 5 + 7 + 2 + 9 + 2 + 7 + 2 + 7 + 2 + 7 + 2 + 7 + 2))
     printf("%10s     %7.2f  %9.2f  %7.2f  %7.2f  %7.2f  %7.2f  %n", " ",
@@ -62,13 +64,22 @@ object Main {
       totalDuration += duration
     }
 
+    printf("%8s (%11s) [%11s]%n", "Category", "Duration", "Unnecessary")
     // LERNIN: toList returns a list of Tuple2[String, Int], and we want to sort by the Int
     // in position 2, thus the _2.
     val sortedDurations = categoryDurations.toList.sortBy((a) => a._2).reverse
     for ((category, duration) <- sortedDurations) {
-      val histogram: Int = (duration * HISTOGRAM_MAX) / maxDuration
-      val percent: Double = (duration / totalDuration) * 100
-      printf("  %8s (%4d, %3.0f%%) %s%n", category, duration, percent, "*" * histogram)
+      val unnecessaryDuration = unnecessaryCategoryDurations.getOrElse(category, 0)
+      val unnecessaryPercent = (unnecessaryDuration.asInstanceOf[Double] / duration) * 100.0
+      val necessaryDuration = duration - unnecessaryDuration
+      val necessaryHistogram = (necessaryDuration * HISTOGRAM_MAX) / maxDuration
+      val unnecessaryHistogram = (unnecessaryDuration * HISTOGRAM_MAX) / maxDuration
+      val percent = (duration / totalDuration) * 100.0
+      printf("%8s (%5d, %3.0f%%) [%5d, %3.0f%%] %s%s%n",
+             category, duration, percent,
+             unnecessaryDuration, unnecessaryPercent,
+             "*" * necessaryHistogram,
+             "-" * unnecessaryHistogram)
     }
   }
 }
