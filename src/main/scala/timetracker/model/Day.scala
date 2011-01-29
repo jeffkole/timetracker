@@ -83,11 +83,10 @@ class Day(val date: Date) {
 }
 
 object Day {
-  // LERNIN: change this to take a PartialFunction that pulls out the correct field of Day
-  def medianNumTasks(days: List[Day]): Double = {
+  private def computeDayStat(days: List[Day], fieldAccessor: (Day) => Int): Double = {
     // LERNIN: There has to be a way to use an implicit so that I don't have to convert
     // an Int to itself
-    val sorted = days.map(_.numTasks).sortBy((a) => a)
+    val sorted = days.map(fieldAccessor).sortBy((a) => a)
     if (sorted.size % 2 == 0) {
       val idx = sorted.size / 2
       val high = sorted(idx)
@@ -95,5 +94,29 @@ object Day {
       return ((high + low) / 2.0)
     }
     sorted(sorted.size / 2)
+  }
+
+  def medianNumTasks(days: List[Day]): Double = {
+    computeDayStat(days, (day: Day) => { day.numTasks })
+  }
+
+  def medianNumRepeats(days: List[Day]): Double = {
+    computeDayStat(days, (day: Day) => { day.numRepeatTasks })
+  }
+
+  def medianNumUnnecessary(days: List[Day]): Double = {
+    computeDayStat(days, (day: Day) => { day.numUnnecessaryTasks })
+  }
+
+  def medianMinDuration(days: List[Day]): Double = {
+    computeDayStat(days, (day: Day) => { day.minDuration })
+  }
+
+  def medianMaxDuration(days: List[Day]): Double = {
+    computeDayStat(days, (day: Day) => { day.maxDuration })
+  }
+
+  def medianAvgDuration(days: List[Day]): Double = {
+    computeDayStat(days, (day: Day) => { day.avgDuration })
   }
 }
