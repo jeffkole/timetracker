@@ -4,7 +4,8 @@ package com.kolesky.timetracker.model
 // LERNIN: If rawCategory is declared as a val here, is it exposed as a property of Task, and if so
 // how can I prevent it from being read by the outside world?  It should never be referenced once
 // the Task has been constructed.
-class Task(val day: Day, val duration: Int, val rawCategory: String, val description: String) {
+// LERNIN: leaving off 'val' makes rawCategory private
+class Task(val day: Day, val duration: Int, rawCategory: String, val description: String) {
   val (category, repeat, unnecessary) = Task.parseCategory(rawCategory)
 
   override def toString = {
